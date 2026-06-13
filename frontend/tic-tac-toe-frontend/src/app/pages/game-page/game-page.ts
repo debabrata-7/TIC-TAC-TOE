@@ -65,8 +65,6 @@ export class GamePageComponent implements OnInit {
 
     this.game = structuredClone(response);
 
-    this.cdr.detectChanges();
-
     console.log('UPDATED GAME');
     console.log(this.game);
   }
@@ -90,12 +88,14 @@ export class GamePageComponent implements OnInit {
           this.updateGame(response);
 
           this.errorMessage = '';
+          this.cdr.detectChanges();
         },
         error: (err) => {
 
           this.errorMessage =
-            err?.error ??
+            err?.error.eorr ??
             'Failed to create game';
+            this.cdr.detectChanges();
         }
       });
   }
@@ -144,14 +144,13 @@ export class GamePageComponent implements OnInit {
           }
 
           this.errorMessage = '';
+          this.cdr.detectChanges();
         },
         error: (err) => {
-
-          console.error(err);
-
           this.errorMessage =
-            err?.error ??
+            err?.error?.message ??
             'Invalid move';
+            this.cdr.detectChanges();
         }
       });
   }
@@ -166,16 +165,17 @@ export class GamePageComponent implements OnInit {
       .undo(this.game.id)
       .subscribe({
         next: (response) => {
-
           this.updateGame(response);
 
           this.errorMessage = '';
+          this.cdr.detectChanges();
         },
         error: (err) => {
-
+          console.log(err)
           this.errorMessage =
-            err?.error ??
-            'Undo failed';
+            err?.error.message ??
+            'Undo failed!!';
+            this.cdr.detectChanges();
         }
       });
   }
@@ -194,6 +194,7 @@ export class GamePageComponent implements OnInit {
           this.updateGame(response);
 
           this.errorMessage = '';
+          this.cdr.detectChanges();
         }
       });
   }

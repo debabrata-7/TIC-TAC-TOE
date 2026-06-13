@@ -37,17 +37,34 @@ public class GamesController : ControllerBase
         Guid id,
         [FromBody] MoveRequest request)
     {
-        var game = _gameService.MakeMove(id, request);
+        try
+        {
+            var game = _gameService.MakeMove(id, request);
 
-        return Ok(game);
+            return Ok(game);
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(StatusCodes.Status412PreconditionFailed,
+        new { Message = ex.Message });
+        }
     }
 
     [HttpPost("{id:guid}/undo")]
     public IActionResult Undo(Guid id)
     {
-        var game = _gameService.Undo(id);
+        try
+        {
+            var game = _gameService.Undo(id);
+            return Ok(game);
+        }
+        catch (Exception ex)
+        {
 
-        return Ok(game);
+            return StatusCode(StatusCodes.Status412PreconditionFailed,
+        new { Message = ex.Message });
+        }
+
     }
 
     [HttpPost("{id:guid}/reset")]

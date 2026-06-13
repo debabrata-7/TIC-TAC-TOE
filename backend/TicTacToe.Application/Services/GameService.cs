@@ -51,68 +51,81 @@ public class GameService : IGameService
 
     public GameState MakeMove(Guid id, MoveRequest request)
     {
-        var game = _gameRepository.Get(id);
-
-        ValidateMove(game, request);
-
-        ApplyMove(
-            game,
-            request.Player,
-            request.Row,
-            request.Column);
-
-        EvaluateGame(game);
-
-        // Computer turn
-        if (game.Mode == GameMode.Computer &&
-            game.Status == GameStatus.InProgress &&
-            game.CurrentPlayer == "O")
+        try
         {
-            ExecuteComputerMove(game);
+            var game = _gameRepository.Get(id);
+
+            ValidateMove(game, request);
+
+            ApplyMove(
+                game,
+                request.Player,
+                request.Row,
+                request.Column);
+
+            EvaluateGame(game);
+
+            // Computer turn
+            if (game.Mode == GameMode.Computer &&
+                game.Status == GameStatus.InProgress &&
+                game.CurrentPlayer == "O")
+            {
+                ExecuteComputerMove(game);
+            }
+
+            _gameRepository.Update(game);
+
+            return game;
         }
-
-        _gameRepository.Update(game);
-
-        return game;
+        catch (Exception ex) {
+            throw;
+        }
     }
 
     public GameState Undo(Guid id)
     {
         var game = _gameRepository.Get(id);
 
-        if (game.Status != GameStatus.InProgress)
-            throw new InvalidOperationException(
-                "Undo is disabled after game completion.");
-
-        if (!game.MoveHistory.Any())
-            throw new InvalidOperationException(
-                "No moves available to undo.");
-
-        if (game.Mode == GameMode.TwoPlayer)
+        try
         {
-            RemoveLastMove(game);
-        }
-        else
-        {
-            // Computer mode
-            if (game.MoveHistory.Count >= 2)
-            {
-                RemoveLastMove(game); // O
-                RemoveLastMove(game); // X
-            }
-            else
+            if (game.Status != GameStatus.InProgress)
+                throw new InvalidOperationException(
+                    "Undo is disabled after game completion.");
+
+            if (!game.MoveHistory.Any())
+                throw new InvalidOperationException(
+                    "No moves available to undo.");
+
+            if (game.Mode == GameMode.TwoPlayer)
             {
                 RemoveLastMove(game);
             }
+            else
+            {
+                // Computer mode
+                if (game.MoveHistory.Count >= 2)
+                {
+                    RemoveLastMove(game); // O
+                    RemoveLastMove(game); // X
+                }
+                else
+                {
+                    RemoveLastMove(game);
+                }
+            }
+
+            game.Status = GameStatus.InProgress;
+            game.Winner = null;
+            game.WinningCells.Clear();
+
+            _gameRepository.Update(game);
+
+            return game;
         }
-
-        game.Status = GameStatus.InProgress;
-        game.Winner = null;
-        game.WinningCells.Clear();
-
-        _gameRepository.Update(game);
-
-        return game;
+        catch (Exception ex)
+        {
+            throw;
+        }
     }
 
     public GameState Reset(Guid id)
@@ -141,27 +154,34 @@ public class GameService : IGameService
         GameState game,
         MoveRequest request)
     {
-        if (game.Status != GameStatus.InProgress)
-            throw new InvalidOperationException(
-                "Game already completed.");
-
-        if (request.Row < 0 || request.Row > 2)
-            throw new InvalidOperationException(
-                "Invalid row.");
-
-        if (request.Column < 0 || request.Column > 2)
-            throw new InvalidOperationException(
-                "Invalid column.");
-
-        if (request.Player != game.CurrentPlayer)
-            throw new InvalidOperationException(
-                "Not player's turn.");
-
-        if (!string.IsNullOrWhiteSpace(
-                game.Board[request.Row] [request.Column]))
+        try
         {
-            throw new InvalidOperationException(
-                "Cell already occupied.");
+            if (game.Status != GameStatus.InProgress)
+                throw new InvalidOperationException(
+                    "Game already completed.");
+
+            if (request.Row < 0 || request.Row > 2)
+                throw new InvalidOperationException(
+                    "Invalid row.");
+
+            if (request.Column < 0 || request.Column > 2)
+                throw new InvalidOperationException(
+                    "Invalid column.");
+
+            if (request.Player != game.CurrentPlayer)
+                throw new InvalidOperationException(
+                    "Not player's turn.");
+
+            if (!string.IsNullOrWhiteSpace(
+                    game.Board[request.Row][request.Column]))
+            {
+                throw new InvalidOperationException(
+                    "Cell already occupied.");
+            }
+        }
+        catch (Exception ex)
+        {
+            throw;
         }
     }
 
@@ -171,7 +191,7 @@ public class GameService : IGameService
         int row,
         int column)
     {
-        game.Board[row] [column] = player;
+        game.Board[row][column] = player;
 
         game.MoveHistory.Add(new Move
         {
