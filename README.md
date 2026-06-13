@@ -11,7 +11,7 @@ The backend serves as the source of truth and manages all game rules, move valid
 # Tech Stack
 
 ## Frontend
-- Angular
+- Angular 22.0.0
 - TypeScript
 - HTML5
 - CSS3
