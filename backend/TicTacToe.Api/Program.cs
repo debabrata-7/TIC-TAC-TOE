@@ -46,6 +46,8 @@ app.UseCors("Angular");
 
 app.UseHttpsRedirection();
 
+
+//todo error handling 
 app.MapControllers();
 
 app.Run();
