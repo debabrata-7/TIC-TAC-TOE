@@ -105,8 +105,8 @@ public class GameService : IGameService
                 // Computer mode
                 if (game.MoveHistory.Count >= 2)
                 {
-                    RemoveLastMove(game); // O
-                    RemoveLastMove(game); // X
+                    RemoveLastMove(game);
+                    RemoveLastMove(game); 
                 }
                 else
                 {

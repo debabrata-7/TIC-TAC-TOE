@@ -14,21 +14,21 @@ public class ComputerMoveService : IComputerMoveService
 {
     public (int row, int column) GetBestMove(GameState game)
     {
-        // 1. Try to win
+        //Try to win
         var winningMove = FindWinningMove(game, "O");
         if (winningMove.HasValue)
             return winningMove.Value;
 
-        // 2. Block player X
+        // Block player X
         var blockingMove = FindWinningMove(game, "X");
         if (blockingMove.HasValue)
             return blockingMove.Value;
 
-        // 3. Take center
+        // Take center
         if (string.IsNullOrWhiteSpace(game.Board[1][1]))
             return (1, 1);
 
-        // 4. Take corner
+        // Take corner
         var corners = new List<(int row, int col)>
         {
             (0,0),
@@ -46,7 +46,7 @@ public class ComputerMoveService : IComputerMoveService
             }
         }
 
-        // 5. Take first available cell
+        //  Take first available cell
         for (int row = 0; row < 3; row++)
         {
             for (int col = 0; col < 3; col++)

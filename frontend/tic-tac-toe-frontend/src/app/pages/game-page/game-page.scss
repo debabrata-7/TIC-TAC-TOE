@@ -38,7 +38,7 @@
 .error {
   color: white;
   background-color: red;
-  border-radius: 2%; /* Industry standard red */
+  border-radius: 2%; 
   font-size: 0.875rem;
   margin-top: 0.25rem;
   display: block;
@@ -46,17 +46,15 @@
   animation: error-fade 2s infinite ease-in-out;
 }
 
-/* Keyframes for the smooth fade transition */
 @keyframes error-fade {
   0%, 100% {
     opacity: 1;
   }
   50% {
-    opacity: 0.3; /* Drops to 30% opacity instead of 0% so it stays slightly visible */
+    opacity: 0.3; 
   }
 }
 
-/* Accessibility: Turns off blinking for users with motion sensitivity */
 @media (prefers-reduced-motion: reduce) {
   .error-message--blinking {
     animation: none;
